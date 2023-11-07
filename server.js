@@ -25,11 +25,10 @@ mongoose
   });
 
 app.use(express.json());
+
 app.use('/medical_equipment', MedicalEquipment);
 app.use('/prescription', Prescription);
 app.use('/stock',Stock);
-
-
 app.use("/wallet",walletRoute)
 app.use("/transaction",transactionRoute)
 app.use("/subscription",subscriptionRoute)
