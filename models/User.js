@@ -11,7 +11,11 @@ const User = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
   id_wallet: { type: Number, required: false },
+<<<<<<< HEAD
   type    : { type: String, enum: ['Admin', 'Patient', 'Doctor', 'Biologist', 'Delivery man', 'Pharmacist'], required: true },
+=======
+  type: { type: String, enum: ['Admin', 'Patient', 'Doctor', 'Biologist', 'Delivery man', 'Pharmacist'], required: true },
+>>>>>>> origin/medical_report
 });
 
 export default model("User",User);
