@@ -8,7 +8,7 @@ const Transaction = new Schema({
     id_receiver: {type:Number,require:true},
     amount     : {type:Number,require:true},
     fees       : {type:Number,require:true},
-    type       : {type:String,require:true},
+    type       : {type:String,require:true,enum:["Buy","Sell","Appointment","Analysis","Delivery"]},
 },
 {
     timestamps : true
