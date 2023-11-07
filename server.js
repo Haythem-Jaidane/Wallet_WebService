@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import MedicalDocuments from './routes/MedicalDocuments.js';
+import Notification from './routes/Notification.js';
 
 const app = express();
 const port = process.env.PORT || 9090;
@@ -9,7 +11,7 @@ mongoose.set('debug', true);
 mongoose.Promise = global.Promise;
 
 mongoose
-  .connect(`mongodb://localhost:27017/${databaseName}`)
+  .connect(`mongodb://127.0.0.1:27017/${databaseName}`)
   .then(() => {
     console.log(`Connected to ${databaseName}`);
   })
@@ -18,6 +20,8 @@ mongoose
   });
 
 app.use(express.json());
+app.use('/medical_documents', MedicalDocuments);
+app.use('/notification', Notification);
 
 
 app.listen(port, () => {
