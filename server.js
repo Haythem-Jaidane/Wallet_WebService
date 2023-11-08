@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 import MedicalEquipment  from './routes/Medical_equipment.js';
 import Prescription from './routes/Prescription.js';
@@ -10,9 +11,13 @@ import subscriptionRoute from "./routes/Subscription.js"
 import MedicalDocuments from './routes/MedicalDocuments.js';
 import Notification from './routes/Notification.js';
 
+dotenv.config();
+
 const app = express();
-const port = process.env.PORT || 9090;
-const databaseName = 'pharmaLink';
+
+const port = process.env.PORT;
+const databaseName = process.env.DATABASE_NAME;
+const host = process.env.HOST
 
 mongoose.set('debug', true);
 mongoose.Promise = global.Promise;
@@ -38,5 +43,5 @@ app.use("/transaction",transactionRoute)
 app.use("/subscription",subscriptionRoute)
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+  console.log(`Server running at http://${host}:${port}/`);
 });
