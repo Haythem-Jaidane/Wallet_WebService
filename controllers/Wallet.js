@@ -33,7 +33,7 @@ export function addWallet(){
     Wallet.create({
         balance: 0
     })
-      .than((wallet) => {
+      .then((wallet) => {
             return wallet;
         }
       )   

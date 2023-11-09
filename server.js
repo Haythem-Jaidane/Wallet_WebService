@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from "cors";
 
 import MedicalEquipment  from './routes/Medical_equipment.js';
 import Prescription from './routes/Prescription.js';
@@ -10,6 +11,7 @@ import transactionRoute from "./routes/Transaction.js"
 import subscriptionRoute from "./routes/Subscription.js"
 import MedicalDocuments from './routes/MedicalDocuments.js';
 import Notification from './routes/Notification.js';
+import UserRoute from './routes/User.js';
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ mongoose
   });
 
 app.use(express.json());
+/*app.use(express.urlencoded({ extended: false }));*/
+app.use(cors());
 
 app.use('/medical_documents', MedicalDocuments);
 app.use('/notification', Notification);
@@ -41,6 +45,7 @@ app.use('/stock',Stock);
 app.use("/wallet",walletRoute)
 app.use("/transaction",transactionRoute)
 app.use("/subscription",subscriptionRoute)
+app.use("/user",UserRoute)
 
 app.listen(port, () => {
   console.log(`Server running at http://${host}:${port}/`);
