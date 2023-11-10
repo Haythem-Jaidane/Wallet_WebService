@@ -20,7 +20,7 @@ export function getWallets(req,res){
 }
 
 export function getWalletById(req,res){
-    Wallet.findOne({id:req.params.id})
+    Wallet.findOne({_id:req.params.id})
         .then((wallet) =>{
             res.status(200).json(wallet);
         })
@@ -116,15 +116,15 @@ export function updateWallet(req,res){
 }
 
 export function deleteWallet(req,res){
-    Wallet.findOneAndRemove({id:req.params.id})
-        .than((wallet) => {
+    Wallet.findByIdAndDelete(req.params.id)
+        .than(wallet => {
             if (!wallet) {
               res.status(400).send(req.params.id + ' was not found');
             } else {
               res.status(200).send(req.params.id + ' was deleted.');
             }
           })
-        .catch((err) => {
+        .catch(err => {
             res.status(500).json({ error: err });
         })
 }

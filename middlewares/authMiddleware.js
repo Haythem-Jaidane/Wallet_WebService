@@ -1,9 +1,10 @@
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import stringifySafe from 'json-stringify-safe';
 
 dotenv.config();
 
-export function authenticateJWT (req, res, next){
+export function authenticateJWT(req, res, next) {
   const token = req.header('Authorization');
 
   if (!token) {
@@ -12,9 +13,12 @@ export function authenticateJWT (req, res, next){
 
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY, {
-      expiresIn: '1h', // Set the maximum lifetime of the token to 1 hour
+      expiresIn: '1h',
     });
-    req.user = decoded;
+
+    // Stringify the object with circular references
+    req.user = JSON.parse(stringifySafe(decoded));
+
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
@@ -24,4 +28,4 @@ export function authenticateJWT (req, res, next){
     // Other errors
     res.status(403).json({ message: 'Invalid token.' });
   }
-};
+}

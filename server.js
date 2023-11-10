@@ -45,7 +45,7 @@ app.use('/stock',Stock);
 app.use("/wallet",walletRoute)
 app.use("/transaction",transactionRoute)
 app.use("/subscription",subscriptionRoute)
-app.use("/user",UserRoute)
+app.use("/users",UserRoute)
 
 app.listen(port, () => {
   console.log(`Server running at http://${host}:${port}/`);

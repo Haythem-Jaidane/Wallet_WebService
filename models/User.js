@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const { Schema,model } = mongoose;
 
 const User = new Schema({
+  id: { type: Number, required: true, unique: true },
   name: { type: String, required: true },
   fname: { type: String, required: true },
   phone: { type: Number, required: true },
