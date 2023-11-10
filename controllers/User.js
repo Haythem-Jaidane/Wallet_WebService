@@ -43,6 +43,7 @@ export function getUsers(req, res){
       let user_list = [];
             for (let i = 0; i < users.length; i++) {
               user_list.push({
+                _id : users[i]._id,
                 id: users[i].id,
                 name: users[i].name,
                 fname: users[i].fname,
@@ -64,56 +65,69 @@ export function getUsers(req, res){
 
 
 // Search User by ID
-export function getUserById(req, res){
+export async function getUserById(req, res) {
   try {
-    const user = User.findById(req.params.id);
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: `Cannot find any user with ID ${req.params.id}` });
+    }
+
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
 
 // Update User
-export function updateUser(req, res){
+export async function updateUser(req, res) {
   try {
-    const user = User.findByIdAndUpdate(req.params.id, req.body);
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    
     if (!user) {
-      return res.status(404).json({ message: `Cannot find any user with ID ${id}` });
+      return res.status(404).json({ message: `Cannot find any user with ID ${req.params.id}` });
     }
-    const updatedUser = User.findById(id);
-    res.status(200).json(updatedUser);
+
+    res.status(200).json({ message: 'User updated successfully', updatedUser: user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
+
 
 // Delete User
-export function deleteUser(req, res){
+export async function deleteUser(req, res) {
   try {
-    const user = User.findByIdAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
+    
     if (!user) {
-      return res.status(404).json({ message: `Cannot find any user with ID ${id}` });
+      return res.status(404).json({ message: `Cannot find any user with ID ${req.params.id}` });
     }
-    res.status(200).json(User);
+
+    // Optionally, you can return the deleted user in the response
+    res.status(200).json({ message: 'User deleted successfully', deletedUser: user });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};
+}
 
 
 // fetch long id with short id
-export function fetchIdbyMongoId(req, res){
+export async function fetchMongoidbyID(req, res) {
   try {
-    const user = User.findOne({ id: req.params.id });
+    const user = await User.findOne({ id: req.params.id });
+
     if (!user) {
-        return res.status(404).json({ message: `Cannot find any users with id ${id}` });
+      return res.status(404).json({ message: `Cannot find any users with id ${req.params.id}` });
     }
+
     res.status(200).json({ userId: user._id });
-} catch (error) {
-    handleError(res, error);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
-}
+
 
 
 // Login
