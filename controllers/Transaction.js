@@ -1,5 +1,8 @@
+import fetch from 'node-fetch';
+
 import Transaction from "../models/Transaction.js"
 import {earnMoney , spendMoney} from "./Wallet.js"
+
 
 export var FEES_RATE = 0.05;
 
@@ -9,12 +12,12 @@ export function getTransactions(req,res){
             let transaction_list = [];
             for (let i = 0; i < transaction.length; i++) {
                 transaction_list.push({
-                    id: transaction[i].id,
-                    id_sender: transaction[i].balance,
-                    id_receiver: transaction[i].linked_bank,
-                    amount : transaction[i].cashflow_type,
+                    id_sender: transaction[i].id_sender,
+                    id_receiver: transaction[i].id_receiver,
+                    amount : transaction[i].amount,
                     fees : transaction[i].fees,
-                    type : transaction[i].type
+                    type : transaction[i].type,
+                    hour : transaction[i].hour
                 });
             }
             res.status(200).json(transaction_list);
@@ -62,8 +65,8 @@ export function getTransactionByIdReceiver(req,res){
 export function getTransactionByUser(req,res){
     Transaction.find({
         $or: [
-            { id_receiver: req.body.id },
-            { id_sender: req.body.id },
+            { id_receiver: req.params.id },
+            { id_sender: req.params.id },
         
         ]})
         .then((transaction) =>{
@@ -75,14 +78,22 @@ export function getTransactionByUser(req,res){
 }
 
 export function addTransaction(id_sender,id_receiver,amount,type){
+    
+    const date = new Date();
+    const fees_transaction = amount * FEES_RATE
+
     Transaction.create({
         id_sender: id_sender,
         id_receiver: id_receiver,
-        amount : amount,
-        fees : FEES_RATE,
-        type : type
+        year: date.getFullYear(),
+        month : date.getMonth(),
+        day : date.getDay(),
+        hour : date.getHours(),
+        minute : date.getMinutes(),
+        amount : amount - fees_transaction,
+        fees : fees_transaction
     })
-        .than((transaction) => {
+        .then((transaction) => {
             receiverWallet = earnMoney(id_receiver,amount-(amount*FEES_RATE)/2)
             senderWallet = spendMoney(id_sender,amount-(amount*FEES_RATE)/2)
             
@@ -95,4 +106,40 @@ export function addTransaction(id_sender,id_receiver,amount,type){
         .catch((err) => {
             return null
         });
+    
+}
+
+
+export function createTransaction(req,res){
+    let newTransaction = addTransaction(req.body.id_sender,req.body.id_receiver,req.body.amount,req.body.type);
+    res.status(201).json(newTransaction);
+}
+
+export function Deposit(req,res){
+    const postData = {
+        amount: req.body.amount,
+        note: "Deposit",
+        first_name: req.body.firstName,
+        last_name: req.body.lastName,
+        email: req.body.email,
+        phone: req.body.phone,
+        return_url: "https://www.return_url.tn",
+        cancel_url: "https://www.cancel_url.tn",
+        webhook_url: "https://www.webhook_url.tn",
+        order_id: "244557"
+      };
+      
+      fetch('https://sandbox.paymee.tn/api/v2/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Token ${req.body.token}`
+        },
+        body: JSON.stringify(postData),
+      })
+        .then(response => {
+            res.status(200).json(response.json())}
+        )
+        .then(data => console.log('Server response:', data))
+        .catch(error => console.error('Error:', error));
 }

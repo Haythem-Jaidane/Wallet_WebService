@@ -5,7 +5,9 @@ import { getTransactions,
          getTransactionById,
          getTransactionByIdSender,
          getTransactionByIdReceiver,
-         getTransactionByUser } 
+         getTransactionByUser,
+         createTransaction,
+         Deposit } 
 from "../controllers/Transaction.js";
 
 const router = express.Router();
@@ -35,5 +37,12 @@ router
     .route("/receiver/:id")
     .get(getTransactionByIdReceiver)
 
+router
+    .route("/withdraw")
+    .post(Deposit)
+
+router
+    .route("/test")
+    .post(createTransaction)
 
 export default router;
